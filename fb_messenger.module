@@ -1,0 +1,60 @@
+<?php
+
+/**
+ * Implements hook_menu().
+ */
+function fb_messenger_menu() {
+  $items['admin/config/fb-messenger'] = array(
+    'title' => 'Facebook Messenger',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('fb_messenger_config_form'),
+    'access arguments' => array('administer fb messenger'),
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function fb_messenger_permission() {
+  $permission['administer fb messenger'] = array(
+    'title' => 'Administer FB Messenger',
+    'description' => 'Perform administrative tasks on FB Messenger Module.',
+  );
+
+  return $permission;
+}
+
+/**
+ * Defines the configuration form for FB Messenger module.
+ */
+function fb_messenger_config_form($form, &$form_state) {
+  $form['fb_messenger_page_url'] = array(
+    '#title' => 'Facebook Page URL',
+    '#type' => 'textfield',
+    '#required' => true,
+    '#default_value' => variable_get('fb_messenger_page_url'),
+  );
+  $form['fb_messenger_link_behavior'] = array(
+    '#title' => 'Link Behavior',
+    '#type' => 'select',
+    '#options' => array(
+      '_blank' => '_blank',
+      '_self' => '_self',
+    ),
+    '#default_value' => variable_get('fb_messenger_link_behavior','_blank'),
+  );
+
+  return system_settings_form($form);
+}
+
+function fb_messenger_page_build(&$page) {
+  drupal_add_css(drupal_get_path('module', 'fb_messenger') . '/js/fb-messenger.css');
+  drupal_add_css('#fb-messenger i { background-image: url(\'sites/all/modules/fb_messenger/img/fb-messenger.png\'); }', 'inline');
+  $icon = drupal_get_path('module', 'fb_messenger') . '/img/fb-messenger.png';
+  $page['content']['fb_messenger'] = array(
+    '#markup' => '<div id="fb-messenger"><a target="' . variable_get('fb_messenger_link_behavior', '_blank') . '" href="https://m.me/' . variable_get('fb_messenger_page_url') . '"><i></i>Message Me</a></div>',
+    '#weight' => -1,
+  );
+}

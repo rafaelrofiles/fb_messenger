@@ -1,0 +1,4 @@
+name = "Facebook Messenger"
+description = "Facebook Messenger"
+core = 7.x
+package = Social
